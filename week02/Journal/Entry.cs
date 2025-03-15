@@ -17,7 +17,7 @@ public class Entry
 
     public override string ToString()
     {
-        return $"{_date} - {_promptText}\nMood: {_mood}\nEntry: {_entryText}\n";
+        return $"{_date} - Prompt: {_promptText}\nMood: {_mood}\nEntry: {_entryText}\n";
     }
 
     public string ToCsvString()
