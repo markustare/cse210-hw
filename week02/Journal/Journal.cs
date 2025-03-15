@@ -4,8 +4,8 @@ using System.IO;
 
 public class Journal
 {
-    private List<Entry> _entries = new List<Entry>();
-    private PromptGenerator _promptGenerator = new PromptGenerator();
+    public List<Entry> _entries = new List<Entry>();
+    public PromptGenerator _promptGenerator = new PromptGenerator();
 
     public void AddEntry()
     {
