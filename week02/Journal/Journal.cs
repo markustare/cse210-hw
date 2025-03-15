@@ -1,23 +1,81 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
 public class Journal
 {
-    public List<Entry> _entries;
-
-    public void AddEntry(Entry newEntry)
+    private List<Entry> _entries = new List<Entry>();
+    private List<string> _prompts = new List<string>
     {
+        "Who was the most interesting person I interacted with today?",
+        "What was the best part of my day?",
+        "How did I see the hand of the Lord in my life today?",
+        "What was the strongest emotion I felt today?",
+        "If I had one thing I could do over today, what would it be?"
+    };
 
+    public void AddEntry()
+    {
+        Random rand = new Random();
+        string prompt = _prompts[rand.Next(_prompts.Count)];
+
+        Console.WriteLine("\nPrompt: " + prompt);
+        Console.Write("Your response: ");
+        string response = Console.ReadLine();
+
+        _entries.Add(new Entry(prompt, response));
+        Console.WriteLine("Entry added successfully.");
     }
 
-    public void DisplayAll()
+    public void DisplayJournal()
     {
+        Console.WriteLine("\n--- Journal Entries ---");
+        if (_entries.Count == 0)
+        {
+            Console.WriteLine("No journal entries found.");
+            return;
+        }
 
+        foreach (Entry entry in _entries)
+        {
+            Console.WriteLine(entry);
+        }
     }
 
-    public void SaveToFile(string file)
+    public void SaveToFile()
     {
+        Console.Write("Enter filename to save: ");
+        string filename = Console.ReadLine();
 
+        using (StreamWriter writer = new StreamWriter(filename))
+        {
+            foreach (Entry entry in _entries)
+            {
+                writer.WriteLine(entry.ToFileString());
+            }
+        }
+        Console.WriteLine("Journal saved successfully.");
     }
-    public void LoadFromFile(string file)
+
+    public void LoadFromFile()
     {
-        
+        Console.Write("Enter filename to load: ");
+        string filename = Console.ReadLine();
+
+        if (File.Exists(filename))
+        {
+            _entries.Clear();
+            string[] lines = File.ReadAllLines(filename);
+
+            foreach (string line in lines)
+            {
+                _entries.Add(Entry.FromFileString(line));
+            }
+            Console.WriteLine("Journal loaded successfully.");
+        }
+        else
+        {
+            Console.WriteLine("File not found.");
+        }
     }
 }
