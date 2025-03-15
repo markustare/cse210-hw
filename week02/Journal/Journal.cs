@@ -5,25 +5,20 @@ using System.IO;
 public class Journal
 {
     private List<Entry> _entries = new List<Entry>();
-    private List<string> _prompts = new List<string>
-    {
-        "Who was the most interesting person I interacted with today?",
-        "What was the best part of my day?",
-        "How did I see the hand of the Lord in my life today?",
-        "What was the strongest emotion I felt today?",
-        "If I had one thing I could do over today, what would it be?"
-    };
+    private PromptGenerator _promptGenerator = new PromptGenerator();
 
     public void AddEntry()
     {
-        Random rand = new Random();
-        string prompt = _prompts[rand.Next(_prompts.Count)];
+        string prompt = _promptGenerator.GetRandomPrompt();
 
         Console.WriteLine("\nPrompt: " + prompt);
         Console.Write("Your response: ");
         string response = Console.ReadLine();
 
-        _entries.Add(new Entry(prompt, response));
+        Console.Write("How did you feel today? (e.g., Happy, Sad, Excited, Anxious): ");
+        string mood = Console.ReadLine();
+
+        _entries.Add(new Entry(prompt, response, mood));
         Console.WriteLine("Entry added successfully.");
     }
 
@@ -42,24 +37,25 @@ public class Journal
         }
     }
 
-    public void SaveToFile()
+    public void SaveToCsv()
     {
-        Console.Write("Enter filename to save: ");
+        Console.Write("Enter filename to save (with .csv extension): ");
         string filename = Console.ReadLine();
 
         using (StreamWriter writer = new StreamWriter(filename))
         {
+            writer.WriteLine("\"Date\",\"Prompt\",\"Mood\",\"Entry\"");
             foreach (Entry entry in _entries)
             {
-                writer.WriteLine(entry.ToFileString());
+                writer.WriteLine(entry.ToCsvString());
             }
         }
-        Console.WriteLine("Journal saved successfully.");
+        Console.WriteLine("Journal saved successfully as CSV.");
     }
 
-    public void LoadFromFile()
+    public void LoadFromCsv()
     {
-        Console.Write("Enter filename to load: ");
+        Console.Write("Enter filename to load (with .csv extension): ");
         string filename = Console.ReadLine();
 
         if (File.Exists(filename))
@@ -67,15 +63,40 @@ public class Journal
             _entries.Clear();
             string[] lines = File.ReadAllLines(filename);
 
-            foreach (string line in lines)
+            for (int i = 1; i < lines.Length; i++) // Skips header row of the CSV file
             {
-                _entries.Add(Entry.FromFileString(line));
+                _entries.Add(Entry.FromCsvString(lines[i]));
             }
-            Console.WriteLine("Journal loaded successfully.");
+            Console.WriteLine("Journal loaded successfully from CSV.");
         }
         else
         {
             Console.WriteLine("File not found.");
+        }
+    }
+
+    public void DisplaySummary()
+    {
+        if (_entries.Count == 0)
+        {
+            Console.WriteLine("No journal entries available for summary.");
+            return;
+        }
+
+        Dictionary<string, int> moodCounts = new Dictionary<string, int>();
+
+        foreach (Entry entry in _entries)
+        {
+            if (moodCounts.ContainsKey(entry._mood))
+                moodCounts[entry._mood]++;
+            else
+                moodCounts[entry._mood] = 1;
+        }
+
+        Console.WriteLine("\n--- Mood Summary ---");
+        foreach (var mood in moodCounts)
+        {
+            Console.WriteLine($"{mood.Key}: {mood.Value} times");
         }
     }
 }
