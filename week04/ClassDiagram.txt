@@ -1,0 +1,84 @@
+Class Diagram YouTube Video Program
+    class Video {
+        -string title
+        -string author
+        -int lengthInSeconds
+        -List<Comment> comments
+        +Video(string title, string author, int lengthInSeconds)
+        +addComment(Comment comment)
+        +getNumberOfComments() : int
+        +getTitle() : string
+        +getAuthor() : string
+        +getLengthInSeconds() : int
+        +getComments() : List<Comment>
+    }
+
+    class Comment {
+        -string commenterName
+        -string commentText
+        +Comment(string commenterName, string commentText)
+        +getCommenterName() : string
+        +getCommentText() : string
+    }
+
+    Video "1" -- "*" Comment : contains
+
+    class Program {
+        +main()
+    }
+
+
+Class Diagram Online Ordering Program
+    class Order {
+        -List<Product> products
+        -Customer customer
+        +Order(Customer customer)
+        +addProduct(Product product)
+        +calculateTotalCost() : double
+        +getPackingLabel() : string
+        +getShippingLabel() : string
+    }
+
+    class Product {
+        -string name
+        -string productId
+        -double price
+        -int quantity
+        +Product(string name, string productId, double price, int quantity)
+        +calculateProductTotalCost() : double
+        +getName() : string
+        +getProductId() : string
+        +getPrice() : double
+        +getQuantity() : int
+    }
+
+    class Customer {
+        -string name
+        -Address address
+        +Customer(string name, Address address)
+        +isInUSA() : bool
+        +getName() : string
+        +getAddress() : Address
+    }
+
+    class Address {
+        -string streetAddress
+        -string city
+        -string stateProvince
+        -string country
+        +Address(string streetAddress, string city, string stateProvince, string country)
+        +isInUSA() : bool
+        +getAddressString() : string
+        +getStreetAddress() : string
+        +getCity() : string
+        +getStateProvince() : string
+        +getCountry() : string
+    }
+
+    Order "1" -- "*" Product : contains
+    Order "1" -- "1" Customer : has
+    Customer "1" -- "1" Address : has
+
+    class Program {
+        +main()
+    }
